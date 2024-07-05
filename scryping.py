@@ -19,41 +19,78 @@ def scryping():
     driver.get("https://scraping-for-beginner.herokuapp.com/")
     time.sleep(1)
 
-    # aタグ（ログイン）をクリック
-    login_a = driver.find_element(By.XPATH, '//a[text()="ログイン"]')
-    # JavaScriptを使用して要素をクリックする
-    driver.execute_script("arguments[0].click();", login_a)
-    # ページ遷移を待つ
-    time.sleep(1)  
+    #ランキングページ
+    ranking_a = driver.find_element(By.XPATH, '//a[text()="ランキング"]')
+    driver.execute_script("arguments[0].click();", ranking_a)
+    time.sleep(1)
 
-    #loginformの要素取得
-    login_user_input = driver.find_element(By.ID,value="username")
-    login_passwd_input = driver.find_element(By.ID,value="password")
-    login_btn = driver.find_element(By.ID,value="login-btn")
+    pagination = driver.find_element(By.ID,value="pagination")
+    pages = pagination.find_elements(By.TAG_NAME,"li")
+    page_length = len(pages)
 
-    #取得した要素に値入力
-    login_user_input.send_keys("imanishi")
-    login_passwd_input.send_keys("kohei")
+    title = []
+    rank = []
 
-    #btnクリックする
-    login_btn.click()
-    time.sleep(1) 
+    for i in range(1,page_length-1):
+        #上記と同じコードで書きたくないが、ループ中に要素再取得しないとエラーが出る
+        pagination = driver.find_element(By.ID,value="pagination")
+        pages = pagination.find_elements(By.TAG_NAME,"li")
+        pages[i].find_element(By.TAG_NAME,value="a").click()
 
-    #一括取得するときはdriver.find_element"s"を使う
-    #ふだんはdriver.find_element
-    key = []
-    value = []
-    keys = driver.find_elements(By.TAG_NAME,"th")
-    values = driver.find_elements(By.TAG_NAME,"td")
+        titles = driver.find_elements(By.CLASS_NAME,"u_title")
+        ranks = driver.find_elements(By.CLASS_NAME,"u_rankBox")
+        
+        for elm_title in titles:
+            val = elm_title.find_element(By.TAG_NAME,value="h2")
+            title.append(val.text.split('\n'))
+        
+        for elm_rank in ranks:
+            val = elm_rank.find_element(By.CLASS_NAME,value="evaluateNumber")
+            rank.append(val.text)
+
+        time.sleep(2)
     
-    for elm in keys:
-        key.append(elm.text)
+    print(title)
+    print(rank)
 
-    for elm in values:
-        value.append(elm.text)
 
-    print(key)
-    print(value)
+
+    # ログインページ
+    # # aタグ（ログイン）をクリック
+    # login_a = driver.find_element(By.XPATH, '//a[text()="ログイン"]')
+    # # JavaScriptを使用して要素をクリックする
+    # driver.execute_script("arguments[0].click();", login_a)
+    # # ページ遷移を待つ
+    # time.sleep(1)  
+
+    # #loginformの要素取得
+    # login_user_input = driver.find_element(By.ID,value="username")
+    # login_passwd_input = driver.find_element(By.ID,value="password")
+    # login_btn = driver.find_element(By.ID,value="login-btn")
+
+    # #取得した要素に値入力
+    # login_user_input.send_keys("imanishi")
+    # login_passwd_input.send_keys("kohei")
+
+    # #btnクリックする
+    # login_btn.click()
+    # time.sleep(1) 
+
+    # #一括取得するときはdriver.find_element"s"を使う
+    # #ふだんはdriver.find_element
+    # key = []
+    # value = []
+    # keys = driver.find_elements(By.TAG_NAME,"th")
+    # values = driver.find_elements(By.TAG_NAME,"td")
+    
+    # for elm in keys:
+    #     key.append(elm.text)
+
+    # for elm in values:
+    #     value.append(elm.text)
+
+    # print(key)
+    # print(value)
 
     # html = driver.page_source.encode("utf-8")
     # obj = BeautifulSoup(html,"html.parser")
